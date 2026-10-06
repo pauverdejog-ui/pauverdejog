@@ -114,24 +114,6 @@ window.SITE = {
       carpeta: "higgs-gnn", informe: "informe.pdf"
     },
     {
-      titulo: "Detección de exoplanetas con datos del telescopio Kepler",
-      contexto: "UAB · Aprendizaje Automático",
-      anio: "2026",
-      equipo: "Equipo de 3",
-      resumen:
-        "Clasificación de 7.015 señales del telescopio Kepler de la NASA en exoplanetas " +
-        "confirmados o falsos positivos. Se comparan k-NN, SVM (kernel lineal y RBF) y Random " +
-        "Forest con búsqueda de hiperparámetros, validación cruzada de 10 folds y tests pareados; " +
-        "la importancia de variables del modelo final coincide con los criterios astrofísicos de la NASA.",
-      metricas: [
-        ["0.999", "AUC-ROC del Random Forest final"],
-        ["98.7 %", "de precisión en test"],
-        ["7.015", "señales de Kepler clasificadas"]
-      ],
-      stack: ["Python", "scikit-learn", "pandas", "SciPy", "Seaborn"],
-      carpeta: "kepler-exoplanet-classification", informe: "informe.pdf"
-    },
-    {
       titulo: "Predicción de victoria en League of Legends con redes bayesianas",
       contexto: "UAB · Modelización de Datos Complejos",
       anio: "2026",
@@ -167,9 +149,27 @@ window.SITE = {
       carpeta: "cnn-image-classification", informe: "report.pdf"
     },
     {
+      titulo: "Detección de exoplanetas con datos del telescopio Kepler",
+      contexto: "UAB · Aprendizaje Automático",
+      anio: "2025",
+      equipo: "Equipo de 3",
+      resumen:
+        "Clasificación de 7.015 señales del telescopio Kepler de la NASA en exoplanetas " +
+        "confirmados o falsos positivos. Se comparan k-NN, SVM (kernel lineal y RBF) y Random " +
+        "Forest con búsqueda de hiperparámetros, validación cruzada de 10 folds y tests pareados; " +
+        "la importancia de variables del modelo final coincide con los criterios astrofísicos de la NASA.",
+      metricas: [
+        ["0.999", "AUC-ROC del Random Forest final"],
+        ["98.7 %", "de precisión en test"],
+        ["7.015", "señales de Kepler clasificadas"]
+      ],
+      stack: ["Python", "scikit-learn", "pandas", "SciPy", "Seaborn"],
+      carpeta: "kepler-exoplanet-classification", informe: "informe.pdf"
+    },
+    {
       titulo: "Evolución de un contraste radiológico con modelos lineales mixtos",
       contexto: "UAB · Modelos Lineales II",
-      anio: "2026",
+      anio: "2025",
       equipo: "Equipo de 4",
       resumen:
         "Análisis longitudinal de la intensidad de píxel en imágenes de diez perros tras inyectar " +
