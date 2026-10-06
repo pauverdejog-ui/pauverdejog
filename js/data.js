@@ -14,7 +14,8 @@ window.SITE = {
     ubicacion: "Barcelona, España",
     email: "pau.verdejo@outlook.es",
     linkedin: "https://www.linkedin.com/in/pau-verdejo-gallardo-61225a3a6",
-    cvPdf: "assets/cv/CV_Pau_Verdejo.pdf"
+    cvPdf: "assets/cv/CV_Pau_Verdejo.pdf",
+    cvPdfEn: "assets/cv/CV_Pau_Verdejo_EN.pdf"
   },
 
   /* Imagen de fondo de la cabecera: "Cosmic Cliffs" (nebulosa de Carina), telescopio James Webb.

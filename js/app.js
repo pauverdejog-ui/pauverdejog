@@ -60,7 +60,7 @@
               <a href="mailto:${esc(p.email)}">${esc(p.email)}</a>
               <a ${ext(p.linkedin)}>LinkedIn ${arrow}</a>
               ${github ? `<a ${ext(github)}>GitHub ${arrow}</a>` : ""}
-              <a href="${esc(p.cvPdf)}" download class="cv-link" hidden>Descargar CV ↓</a>
+              <a href="${esc(p.cvPdf)}" target="_blank" rel="noopener" class="cv-link" data-src="${esc(p.cvPdf)}" hidden>CV en PDF ↓</a>${p.cvPdfEn ? `<a href="${esc(p.cvPdfEn)}" target="_blank" rel="noopener" class="cv-link" data-src="${esc(p.cvPdfEn)}" hidden>CV in English ↓</a>` : ""}
             </div>
           </div>
         </div>
@@ -189,7 +189,7 @@
       <div class="contact__links">
         <a ${ext(p.linkedin)}>LinkedIn ${arrow}</a>
         ${github ? `<a ${ext(github)}>GitHub ${arrow}</a>` : ""}
-        <a href="${esc(p.cvPdf)}" download class="cv-link" hidden>Descargar CV ↓</a>
+        <a href="${esc(p.cvPdf)}" target="_blank" rel="noopener" class="cv-link" data-src="${esc(p.cvPdf)}" hidden>CV en PDF ↓</a>${p.cvPdfEn ? `<a href="${esc(p.cvPdfEn)}" target="_blank" rel="noopener" class="cv-link" data-src="${esc(p.cvPdfEn)}" hidden>CV in English ↓</a>` : ""}
       </div>`;
   }
 
@@ -239,7 +239,7 @@
 
     // Muestra "Descargar CV" solo si el PDF existe
     if (location.protocol.startsWith("http")) {
-      fetch(S.perfil.cvPdf, { method: "HEAD" }).then((r) => { if (r.ok) $$(".cv-link").forEach((a) => (a.hidden = false)); }).catch(() => {});
+      $$(".cv-link").forEach((a) => fetch(a.dataset.src, { method: "HEAD" }).then((r) => { if (r.ok) a.hidden = false; }).catch(() => {}));
     }
   }
 
