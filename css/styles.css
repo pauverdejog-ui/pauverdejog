@@ -102,13 +102,32 @@ a:hover .arrow { transform: translate(2px, -2px); }
 .hero__links a { color: var(--text); border-bottom: 1px solid var(--line); padding-bottom: 2px; transition: border-color .2s; }
 .hero__links a:hover { border-color: var(--text); }
 
+/* ---------- Disposición: contenido + columna lateral ---------- */
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 288px; gap: 80px; align-items: start; }
+
 /* ---------- Secciones ---------- */
-.section { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; padding: 72px 0; border-top: 1px solid var(--line); }
-.section__label { position: sticky; top: 92px; align-self: start; }
-.section__label h2 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
-.section__label p { margin: 4px 0 0; font-size: 14px; color: var(--text-3); }
+.section { padding: 64px 0; border-top: 1px solid var(--line); }
+.section__label { margin-bottom: 28px; }
+.section__label h2 { margin: 0; font-family: var(--display); font-size: 24px; font-weight: 600; letter-spacing: -.025em; }
+.section__label p { margin: 6px 0 0; font-size: 14px; color: var(--text-3); }
 .sub { margin: 48px 0 14px; font-size: 13px; font-weight: 500; color: var(--text-3); letter-spacing: .01em; }
 .sub:first-child { margin-top: 0; }
+
+/* ---------- Columna lateral ---------- */
+.side { padding: 64px 0 0; border-top: 1px solid var(--line); }
+.side__title { margin: 0 0 4px; font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
+.side__group h3 { margin: 22px 0 6px; font-size: 12.5px; font-weight: 500; color: var(--text-3); letter-spacing: .01em; }
+.side__group ul { margin: 0; padding: 0; list-style: none; }
+.skill-row { display: grid; grid-template-columns: 24px minmax(0, 1fr) 76px; align-items: center; gap: 10px; padding: 5px 0; font-size: 14px; cursor: default; }
+.skill-row__logo { width: 24px; height: 24px; border-radius: 6px; background: #fff; border: 1px solid var(--line); display: grid; place-items: center; overflow: hidden; }
+.skill-row__logo img { width: 16px; height: 16px; object-fit: contain; }
+.skill-row__logo span { font-family: var(--display); font-size: 9px; font-weight: 700; letter-spacing: -.02em; color: #1d1d1f; }
+.skill-row__logo svg { width: 15px; height: 15px; color: #0071e3; }
+.skill-row__logo--flag { background: none; border: 0; border-radius: 3px; }
+.skill-row__logo--flag img { width: 24px; height: 18px; object-fit: cover; border-radius: 3px; box-shadow: 0 0 0 1px var(--line); }
+.skill-row__name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.skill-row__name small { margin-left: 6px; font-size: 12px; color: var(--text-3); }
+.side__legend { margin: 20px 0 0; font-size: 11.5px; line-height: 1.6; color: var(--text-3); }
 
 /* ---------- Entradas (formación / experiencia) ---------- */
 .entry { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 20px; align-items: start; padding: 22px 0; border-top: 1px solid var(--line); }
@@ -173,31 +192,10 @@ a:hover .arrow { transform: translate(2px, -2px); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
 .chip { padding: 5px 11px; border: 1px solid var(--line); border-radius: 999px; font-size: 13px; color: var(--text-2); }
 
-/* ---------- Tecnologías ---------- */
-.tech-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.tech {
-  display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 4px 14px;
-  padding: 16px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  transition: border-color .2s;
-}
-.tech:hover { border-color: color-mix(in srgb, var(--text) 25%, transparent); }
-.tech__logo { grid-row: span 2; width: 40px; height: 40px; border-radius: 10px; background: #fff; border: 1px solid var(--line); display: grid; place-items: center; }
-.tech__logo img { width: 26px; height: 26px; object-fit: contain; }
-.tech__logo span { font-family: var(--display); font-weight: 700; font-size: 13px; letter-spacing: -.02em; color: #1d1d1f; }
-.tech__logo svg { width: 22px; height: 22px; color: #0071e3; }
-.tech__logo--flag { background: none; border: 0; }
-.tech__logo--flag img { width: 34px; height: 26px; border-radius: 4px; object-fit: cover; box-shadow: 0 0 0 1px var(--line); }
-.tech__top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-.tech__name { font-weight: 600; font-size: 15.5px; letter-spacing: -.015em; }
-.tech__lvl { font-size: 12.5px; color: var(--text-3); white-space: nowrap; }
-.tech__use { grid-column: 1 / -1; margin-top: 8px; font-size: 13.5px; color: var(--text-2); line-height: 1.4; }
 .meter { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; height: 4px; align-self: center; }
 .meter i { border-radius: 2px; background: var(--bar-off); position: relative; overflow: hidden; }
 .meter i.on::after { content: ""; position: absolute; inset: 0; background: var(--bar); transform: scaleX(0); transform-origin: left; transition: transform .45s var(--ease); transition-delay: calc(var(--i) * 70ms); }
 .is-in .meter i.on::after { transform: scaleX(1); }
-.legend { margin-top: 14px; font-size: 12.5px; color: var(--text-3); }
 
 /* ---------- Contacto y pie ---------- */
 .contact__mail { display: inline-block; font-family: var(--display); font-size: clamp(26px, 3.4vw, 40px); font-weight: 600; letter-spacing: -.035em; line-height: 1.1; border-bottom: 2px solid var(--line); padding-bottom: 4px; transition: border-color .2s; }
@@ -234,8 +232,8 @@ a:hover .arrow { transform: translate(2px, -2px); }
 /* ---------- Pantallas medianas y móviles ---------- */
 @media (max-width: 1000px) {
   :root { --pad: 32px; }
-  .tech-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .section { grid-template-columns: 170px minmax(0, 1fr); gap: 32px; }
+  .layout { grid-template-columns: 1fr; gap: 0; }
+  .side { padding-bottom: 64px; }
 }
 @media (max-width: 760px) {
   :root { --pad: 20px; }
@@ -243,9 +241,8 @@ a:hover .arrow { transform: translate(2px, -2px); }
   .nav a:not(.pill) { display: none; }
   .hero { padding: 64px 0 56px; }
   .hero__loc { font-size: 18px; }
-  .section { grid-template-columns: 1fr; gap: 20px; padding: 48px 0; }
-  .section__label { position: static; }
-  .section__label h2 { font-size: 24px; letter-spacing: -.025em; }
+  .section { padding: 48px 0; }
+  .side { padding-top: 48px; }
   .entry { grid-template-columns: 44px minmax(0, 1fr); gap: 14px; }
   .entry--plain { grid-template-columns: 1fr; }
   .entry .entry__date { grid-column: 2; grid-row: 2; padding-top: 0; margin-top: -14px; }
@@ -257,6 +254,5 @@ a:hover .arrow { transform: translate(2px, -2px); }
   .metric { display: flex; align-items: baseline; gap: 14px; }
   .metric strong { font-size: 26px; min-width: 88px; }
   .metric span { margin-top: 0; max-width: none; }
-  .tech-grid { grid-template-columns: 1fr; }
   .footer { flex-direction: column; }
 }

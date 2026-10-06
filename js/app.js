@@ -100,22 +100,41 @@
     }).join("");
   }
 
-  function techTile(t) {
-    let logo;
-    if (t.logo === "sql") logo = db;
-    else if (t.logo) logo = logoImg(`assets/logos/${t.logo}.svg`, t.ini || t.nombre.slice(0, 2)).replace("<span>", '<span class="ini">');
-    else logo = `<span class="ini">${esc(t.ini || t.nombre.slice(0, 2))}</span>`;
-    return `
-      <div class="tech reveal">
-        <span class="tech__logo">${logo}</span>
-        <div class="tech__top"><span class="tech__name">${esc(t.nombre)}</span><span class="tech__lvl">${NIVEL[t.nivel]}</span></div>
-        ${meter(t.nivel)}
-        <div class="tech__use">${esc(t.uso)}</div>
+  function sideLogo(t) {
+    if (t.logo === "sql") return db;
+    if (t.logo) return logoImg(`assets/logos/${t.logo}.svg`, t.ini || t.nombre.slice(0, 2));
+    return `<span>${esc(t.ini || t.nombre.slice(0, 2))}</span>`;
+  }
+
+  /* Columna lateral: tecnologías e idiomas con su nivel */
+  function lateral() {
+    const row = (logo, name, label, nivel, title, flag) => `
+      <li class="skill-row" ${title ? `title="${esc(title)}"` : ""}>
+        <span class="skill-row__logo${flag ? " skill-row__logo--flag" : ""}">${logo}</span>
+        <span class="skill-row__name">${esc(name)}${label ? `<small>${esc(label)}</small>` : ""}</span>
+        ${meter(nivel)}
+      </li>`;
+    const groups = S.tecnologias.map((g) => `
+      <div class="side__group">
+        <h3>${esc(g.grupo)}</h3>
+        <ul>${g.items.map((t) => row(sideLogo(t), t.nombre, "", t.nivel, `${NIVEL[t.nivel]} · ${t.uso}`)).join("")}</ul>
+      </div>`).join("");
+    const idiomas = `
+      <div class="side__group">
+        <h3>Idiomas</h3>
+        <ul>${S.idiomas.map((l) => row(`<img src="assets/flags/${esc(l.bandera)}.svg" alt="">`, l.nombre, l.etiqueta, l.nivel, "", true)).join("")}</ul>
       </div>`;
+    return `
+      <aside class="side reveal" aria-label="Habilidades técnicas e idiomas">
+        <h2 class="side__title">Habilidades técnicas</h2>
+        ${groups}
+        ${idiomas}
+        <p class="side__legend">${NIVEL.slice(1).map((n, i) => `${i + 1} ${n}`).join(" · ")}</p>
+      </aside>`;
   }
 
   function habilidades() {
-    const areas = S.areas.map((a, i) => `
+    return S.areas.map((a, i) => `
       <div class="area">
         <button class="area__head" aria-expanded="false" aria-controls="area${i}">
           <div><div class="area__name">${esc(a.nombre)}</div><div class="area__sum">${esc(a.resumen)}</div></div>
@@ -126,26 +145,6 @@
           <div class="chips">${a.metodos.map((m) => `<span class="chip">${esc(m)}</span>`).join("")}</div>
         </div></div></div>
       </div>`).join("");
-
-    const groups = S.tecnologias.map((g) => `
-      <h3 class="sub">${esc(g.grupo)}</h3>
-      <div class="tech-grid">${g.items.map(techTile).join("")}</div>`).join("");
-
-    const idiomas = `
-      <h3 class="sub">Idiomas</h3>
-      <div class="tech-grid">${S.idiomas.map((l) => `
-        <div class="tech reveal">
-          <span class="tech__logo tech__logo--flag"><img src="assets/flags/${esc(l.bandera)}.svg" alt=""></span>
-          <div class="tech__top"><span class="tech__name">${esc(l.nombre)}</span><span class="tech__lvl">${esc(l.etiqueta)}</span></div>
-          ${meter(l.nivel)}
-        </div>`).join("")}</div>`;
-
-    return `
-      <h3 class="sub">Áreas de conocimiento</h3>
-      <div class="areas">${areas}</div>
-      ${groups}
-      <p class="legend">Nivel: ${NIVEL.slice(1).map((n, i) => `${i + 1} ${n}`).join(" · ")}</p>
-      ${idiomas}`;
   }
 
   function contacto() {
@@ -169,10 +168,15 @@
     $("#app").innerHTML = `
       <div class="wrap">
         ${hero()}
-        ${section("formacion", "Formación", "", formacion())}
-        ${section("experiencia", "Experiencia", "", experiencia())}
-        ${section("proyectos", "Proyectos", "Código e informe de cada uno en GitHub.", proyectos())}
-        ${section("habilidades", "Habilidades", "Haz clic en un área para ver el detalle.", habilidades())}
+        <div class="layout">
+          <div class="main">
+            ${section("formacion", "Formación", "", formacion())}
+            ${section("experiencia", "Experiencia", "", experiencia())}
+            ${section("proyectos", "Proyectos", "Código e informe de cada uno en GitHub.", proyectos())}
+            ${section("habilidades", "Conocimientos", "Haz clic en un área para ver el detalle.", habilidades())}
+          </div>
+          ${lateral()}
+        </div>
         ${section("contacto", "Contacto", "", contacto())}
         ${footer()}
       </div>`;
