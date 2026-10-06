@@ -17,6 +17,18 @@ window.SITE = {
     cvPdf: "assets/cv/CV_Pau_Verdejo.pdf"
   },
 
+  /* Imagen de fondo de la cabecera: "Cosmic Cliffs" (nebulosa de Carina), telescopio James Webb.
+     Se usa la primera que cargue. Si guardas tu propia imagen como assets/fondo.jpg, tendrá prioridad. */
+  fondo: {
+    candidatos: [
+      "assets/fondo.jpg",
+      "https://cdn.esawebb.org/archives/images/publicationjpg/weic2205a.jpg",
+      "https://cdn.esawebb.org/archives/images/screen/weic2205a.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/NASA%E2%80%99s_Webb_Reveals_Cosmic_Cliffs,_Glittering_Landscape_of_Star_Birth.jpg/1920px-NASA%E2%80%99s_Webb_Reveals_Cosmic_Cliffs,_Glittering_Landscape_of_Star_Birth.jpg"
+    ],
+    credito: "Imagen: NASA, ESA, CSA y STScI · Telescopio James Webb"
+  },
+
   /* logo: ruta local o URL. Si no carga, se muestran las iniciales. */
   formacion: [
     {

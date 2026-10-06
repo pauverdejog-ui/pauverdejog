@@ -32,7 +32,11 @@
       : `<a class="pill" href="index.html"><span>←</span> Volver al CV</a>`;
     $("#topbar").innerHTML = `<div class="wrap"><a class="brand" href="index.html">${esc(S.perfil.nombre)}</a><nav class="nav">${links}</nav></div>`;
     const bar = $("#topbar");
-    const onScroll = () => bar.classList.toggle("is-scrolled", window.scrollY > 8);
+    const onScroll = () => {
+      bar.classList.toggle("is-scrolled", window.scrollY > 8);
+      const h = document.getElementById("heroBg");
+      bar.classList.toggle("on-hero", !!h && window.scrollY < h.offsetHeight - 60);
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
   }
@@ -47,16 +51,47 @@
   function hero() {
     const p = S.perfil;
     return `
-      <div class="hero">
-        <h1>${esc(p.nombre)}</h1>
-        <p class="hero__loc">${esc(p.ubicacion)}</p>
-        <div class="hero__links">
-          <a href="mailto:${esc(p.email)}">${esc(p.email)}</a>
-          <a ${ext(p.linkedin)}>LinkedIn ${arrow}</a>
-          ${github ? `<a ${ext(github)}>GitHub ${arrow}</a>` : ""}
-          <a href="${esc(p.cvPdf)}" download class="cv-link" hidden>Descargar CV ↓</a>
+      <header class="hero-bg" id="heroBg">
+        <div class="wrap">
+          <div class="hero">
+            <h1>${esc(p.nombre)}</h1>
+            <p class="hero__loc">${esc(p.ubicacion)}</p>
+            <div class="hero__links">
+              <a href="mailto:${esc(p.email)}">${esc(p.email)}</a>
+              <a ${ext(p.linkedin)}>LinkedIn ${arrow}</a>
+              ${github ? `<a ${ext(github)}>GitHub ${arrow}</a>` : ""}
+              <a href="${esc(p.cvPdf)}" download class="cv-link" hidden>Descargar CV ↓</a>
+            </div>
+          </div>
         </div>
-      </div>`;
+        ${S.fondo ? `<span class="hero-bg__credit">${esc(S.fondo.credito)}</span>` : ""}
+      </header>`;
+  }
+
+  /* Carga la primera imagen de fondo disponible */
+  function cargarFondo() {
+    const el = $("#heroBg");
+    if (!el || !S.fondo) return;
+    let lista = S.fondo.candidatos.slice();
+    // En pantallas pequeñas, primero la versión ligera
+    if (window.innerWidth < 900) lista = [lista[0], ...lista.slice(1).sort((a, b) => (b.includes("/screen/") ? 1 : 0) - (a.includes("/screen/") ? 1 : 0))];
+    const probar = () => {
+      const src = lista.shift();
+      if (!src) return;
+      const img = new Image();
+      let hecho = false;
+      const fallo = () => { if (!hecho) { hecho = true; probar(); } };
+      const t = setTimeout(fallo, 8000);
+      img.onload = () => {
+        if (hecho) return;
+        hecho = true; clearTimeout(t);
+        el.style.setProperty("--fondo", `url("${src}")`);
+        el.classList.add("has-img");
+      };
+      img.onerror = () => { clearTimeout(t); fallo(); };
+      img.src = src;
+    };
+    probar();
   }
 
   function formacion() {
@@ -166,8 +201,8 @@
 
   function renderInicio() {
     $("#app").innerHTML = `
+      ${hero()}
       <div class="wrap">
-        ${hero()}
         <div class="layout">
           <div class="main">
             ${section("formacion", "Formación", "", formacion())}
@@ -180,6 +215,8 @@
         ${section("contacto", "Contacto", "", contacto())}
         ${footer()}
       </div>`;
+
+    cargarFondo();
 
     $$(".area__head").forEach((b) => b.addEventListener("click", () => {
       const a = b.closest(".area");
@@ -250,6 +287,7 @@
   /* ---------- Arranque ---------- */
   topbar();
   page === "fotos" ? renderFotos() : renderInicio();
+  window.dispatchEvent(new Event("scroll"));
 
   const io = new IntersectionObserver((es) => es.forEach((e) => {
     if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }

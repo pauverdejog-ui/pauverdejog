@@ -68,7 +68,7 @@ a:hover .arrow { transform: translate(2px, -2px); }
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid transparent;
-  transition: border-color .3s;
+  transition: background .3s, border-color .3s;
 }
 .topbar.is-scrolled { border-bottom-color: var(--line); }
 .topbar .wrap { height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
@@ -88,7 +88,22 @@ a:hover .arrow { transform: translate(2px, -2px); }
 .pill:hover { background: var(--tile); }
 
 /* ---------- Portada ---------- */
-.hero { padding: 128px 0 96px; }
+/* Cabecera con imagen del James Webb */
+.hero-bg {
+  position: relative;
+  margin-top: -61px;
+  color: #fff;
+  background-color: #07080d;
+  background-image:
+    linear-gradient(180deg, rgba(0, 0, 0, .45) 0%, rgba(0, 0, 0, .15) 40%, rgba(0, 0, 0, .55) 100%),
+    var(--fondo, radial-gradient(120% 90% at 70% 110%, #3b2a4f 0%, #12131c 55%, #07080d 100%));
+  background-size: cover;
+  background-position: center 62%;
+  overflow: hidden;
+}
+.hero-bg.has-img { animation: fondo-in 1.2s var(--ease); }
+@keyframes fondo-in { from { filter: brightness(.6); } to { filter: none; } }
+.hero { position: relative; padding: 200px 0 120px; min-height: min(78vh, 760px); display: flex; flex-direction: column; justify-content: flex-end; }
 .hero h1 {
   margin: 0;
   font-family: var(--display);
@@ -96,11 +111,23 @@ a:hover .arrow { transform: translate(2px, -2px); }
   font-weight: 700;
   letter-spacing: -.045em;
   line-height: 1;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, .35);
 }
-.hero__loc { margin: 20px 0 0; font-size: 20px; color: var(--text-2); letter-spacing: -.015em; }
+.hero__loc { margin: 20px 0 0; font-size: 20px; color: rgba(255, 255, 255, .82); letter-spacing: -.015em; }
 .hero__links { display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 40px; font-size: 16px; }
-.hero__links a { color: var(--text); border-bottom: 1px solid var(--line); padding-bottom: 2px; transition: border-color .2s; }
-.hero__links a:hover { border-color: var(--text); }
+.hero__links a { color: #fff; border-bottom: 1px solid rgba(255, 255, 255, .35); padding-bottom: 2px; transition: border-color .2s; }
+.hero__links a:hover { border-color: #fff; }
+.hero-bg:not(.has-img) .hero-bg__credit { display: none; }
+.hero-bg__credit { position: absolute; right: 16px; bottom: 12px; font-size: 11px; color: rgba(255, 255, 255, .55); }
+.hero-bg + .wrap .layout > .main > .section:first-child,
+.hero-bg + .wrap .side { border-top: 0; }
+
+/* Barra superior transparente sobre la imagen */
+.topbar.on-hero { background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; border-bottom-color: transparent; }
+.topbar.on-hero .brand, .topbar.on-hero .nav a { color: rgba(255, 255, 255, .88); }
+.topbar.on-hero .nav a:hover { color: #fff; }
+.topbar.on-hero .pill { color: #fff !important; border-color: rgba(255, 255, 255, .4); }
+.topbar.on-hero .pill:hover { background: rgba(255, 255, 255, .12); }
 
 /* ---------- Disposición: contenido + columna lateral ---------- */
 .layout { display: grid; grid-template-columns: minmax(0, 1fr) 288px; gap: 80px; align-items: start; }
@@ -239,7 +266,7 @@ a:hover .arrow { transform: translate(2px, -2px); }
   :root { --pad: 20px; }
   body { font-size: 16px; }
   .nav a:not(.pill) { display: none; }
-  .hero { padding: 64px 0 56px; }
+  .hero { padding: 140px 0 64px; min-height: 64vh; }
   .hero__loc { font-size: 18px; }
   .section { padding: 48px 0; }
   .side { padding-top: 48px; }
