@@ -7,9 +7,12 @@
   const qs = new URLSearchParams(location.search).get("lang");
   let saved = null;
   try { saved = localStorage.getItem("lang"); } catch (e) { /* sin almacenamiento */ }
-  const LANG = qs === "en" || qs === "es" ? qs
-    : saved === "en" || saved === "es" ? saved
-    : /^(es|ca|gl|eu)/i.test(navigator.language || "") ? "es" : "en";
+  const LANGS = ["es", "ca", "en"];
+  const nav0 = (navigator.language || "").toLowerCase();
+  const LANG = LANGS.includes(qs) ? qs
+    : LANGS.includes(saved) ? saved
+    : nav0.startsWith("ca") ? "ca"
+    : /^(es|gl|eu)/.test(nav0) ? "es" : "en";
   document.documentElement.lang = LANG;
 
   // Mezcla los textos en inglés sobre los datos base (las listas se combinan por posición)
@@ -22,7 +25,8 @@
     }
     return over === undefined ? base : over;
   };
-  const S = LANG === "en" && window.SITE_EN ? merge(window.SITE, window.SITE_EN) : window.SITE;
+  const OVER = { en: window.SITE_EN, ca: window.SITE_CA }[LANG];
+  const S = OVER ? merge(window.SITE, OVER) : window.SITE;
 
   const UI = {
     es: {
@@ -31,10 +35,21 @@
       conocimientos: "Conocimientos", conocimientosNota: "Haz clic en un área para ver el detalle.", contacto: "Contacto",
       codigo: "Código", informe: "Informe", cvEs: "CV en PDF ↓", cvEn: "CV in English ↓",
       habilidades: "Habilidades técnicas", idiomas: "Idiomas", nivel: ["", "Básico", "Elemental", "Intermedio", "Avanzado", "Experto"],
-      nivelDe: (n) => `Nivel ${n} de 5`, verFigura: "Ampliar figura",
+      nivelDe: (n) => `Nivel ${n} de 5`, verFigura: "Ampliar figura", figuraOriginal: "Ver figura original",
       fotosSub: "Algunas fotos que he hecho.", fotosVacio: "Galería en preparación.",
       demos: { lorenz: "Atractor de Lorenz · arrastra para girarlo", knn: "Clasificador k-NN · clic: punto azul, clic derecho: violeta",
                orbitas: "Gravedad · arrastra para lanzar un planeta", borrar: "Borrar" }
+    },
+    ca: {
+      nav: ["Formació", "Experiència", "Projectes", "Coneixements", "Contacte"], fotos: "Fotografia", volver: "Tornar al CV",
+      formacion: "Formació", experiencia: "Experiència", proyectos: "Projectes", proyectosNota: "Codi i informe de cadascun a GitHub.",
+      conocimientos: "Coneixements", conocimientosNota: "Fes clic en una àrea per veure'n el detall.", contacto: "Contacte",
+      codigo: "Codi", informe: "Informe", cvEs: "CV en castellà ↓", cvEn: "CV en anglès ↓",
+      habilidades: "Habilitats tècniques", idiomas: "Idiomes", nivel: ["", "Bàsic", "Elemental", "Intermedi", "Avançat", "Expert"],
+      nivelDe: (n) => `Nivell ${n} de 5`, verFigura: "Amplia la figura", figuraOriginal: "Veure la figura original",
+      fotosSub: "Algunes fotos que he fet.", fotosVacio: "Galeria en preparació.",
+      demos: { lorenz: "Atractor de Lorenz · arrossega per girar-lo", knn: "Classificador k-NN · clic: punt blau, clic dret: violeta",
+               orbitas: "Gravetat · arrossega per llançar un planeta", borrar: "Esborra" }
     },
     en: {
       nav: ["Education", "Experience", "Projects", "Knowledge", "Contact"], fotos: "Photography", volver: "Back to CV",
@@ -42,7 +57,7 @@
       conocimientos: "Knowledge", conocimientosNota: "Click an area to see the details.", contacto: "Contact",
       codigo: "Code", informe: "Report", cvEs: "CV in Spanish ↓", cvEn: "CV in English ↓",
       habilidades: "Technical skills", idiomas: "Languages", nivel: ["", "Basic", "Elementary", "Intermediate", "Advanced", "Expert"],
-      nivelDe: (n) => `Level ${n} of 5`, verFigura: "Enlarge figure",
+      nivelDe: (n) => `Level ${n} of 5`, verFigura: "Enlarge figure", figuraOriginal: "View original figure",
       fotosSub: "Some photos I have taken.", fotosVacio: "Gallery coming soon.",
       demos: { lorenz: "Lorenz attractor · drag to rotate", knn: "k-NN classifier · click: blue point, right-click: purple",
                orbitas: "Gravity · drag to launch a planet", borrar: "Clear" }
@@ -72,18 +87,20 @@
   /* ---------- Cabecera ---------- */
   function topbar() {
     const ids = ["formacion", "experiencia", "proyectos", "habilidades", "contacto"];
-    const other = LANG === "es" ? "en" : "es";
-    const sw = `<button class="lang" type="button" data-lang="${other}" aria-label="${other === "en" ? "English" : "Español"}"><b>${LANG.toUpperCase()}</b><span>${other.toUpperCase()}</span></button>`;
+    const names = { es: "Español", ca: "Català", en: "English" };
+    const sw = `<div class="lang" role="group" aria-label="Idioma / Language">${LANGS.map((l) =>
+      `<button type="button" data-lang="${l}" class="${l === LANG ? "is-on" : ""}" aria-pressed="${l === LANG}" aria-label="${names[l]}" lang="${l}">${l.toUpperCase()}</button>`).join("")}</div>`;
     const links = page === "inicio"
       ? `${ids.map((id, i) => `<a href="#${id}">${UI.nav[i]}</a>`).join("")}
          ${sw}<a class="pill" href="fotos.html">${UI.fotos} <span class="arrow">→</span></a>`
       : `${sw}<a class="pill" href="index.html"><span>←</span> ${UI.volver}</a>`;
     $("#topbar").innerHTML = `<div class="wrap"><a class="brand" href="index.html">${esc(S.perfil.nombre)}</a><nav class="nav">${links}</nav></div>`;
-    $("#topbar .lang").addEventListener("click", (e) => {
-      const l = e.currentTarget.dataset.lang;
+    $$("#topbar .lang button").forEach((b) => b.addEventListener("click", () => {
+      const l = b.dataset.lang;
+      if (l === LANG) return;
       try { localStorage.setItem("lang", l); } catch (err) { /* sin almacenamiento */ }
       const u = new URL(location.href); u.searchParams.set("lang", l); location.href = u.toString();
-    });
+    }));
     const bar = $("#topbar");
     const onScroll = () => {
       bar.classList.toggle("is-scrolled", window.scrollY > 8);
@@ -172,6 +189,45 @@
       </div>`).join("");
   }
 
+  /* Gráfico pequeño de comparación de modelos, con el estilo de la web */
+  function grafico(g, fig, pie) {
+    const [lo, hi] = g.dominio;
+    const pct = (v) => Math.max(0, Math.min(100, ((v - lo) / (hi - lo)) * 100));
+    const fmt = (v) => Number(v).toFixed(g.decimales ?? 2) + (g.unidad || "");
+    // Marcas del eje en valores redondos (1, 2, 2.5 o 5 × 10^k)
+    const raw = (hi - lo) / 3, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+    const m = [1, 2, 2.5, 5, 10].find((k) => (hi - lo) / (k * mag) <= 4);
+    const step = m * mag;
+    const ticks = [];
+    for (let t = Math.ceil(lo / step - 1e-9) * step; t <= hi + 1e-9; t += step) ticks.push(t);
+    const tickDec = Math.max(0, -Math.floor(Math.log10(step) + 1e-9) + (m === 2.5 ? 1 : 0));
+    const grid = ticks.map((t) => `<b class="c-grid" style="left:${pct(t)}%"></b>`).join("");
+    const rows = g.filas.map((f) => {
+      let mark, val;
+      if (g.tipo === "pesas") {
+        const x1 = pct(f.a), x2 = pct(f.b);
+        mark = `<i class="c-seg" style="--x:${x1}%;--w:${x2 - x1}%"></i><i class="c-dot c-dot--a" style="--x:${x1}%"></i><i class="c-dot" style="--x:${x2}%"></i>`;
+        val = fmt(f.b);
+      } else if (g.tipo === "barras") {
+        mark = `<i class="c-bar" style="--w:${pct(f.v)}%"></i>`;
+        val = fmt(f.v);
+      } else {
+        mark = `<i class="c-dot${f.ref ? " c-dot--ref" : ""}" style="--x:${pct(f.v)}%"></i>`;
+        val = fmt(f.v);
+      }
+      return `<div class="c-row${f.top ? " is-top" : ""}"><span class="c-lab">${esc(f.e)}</span><span class="c-track">${grid}${mark}</span><span class="c-val">${esc(val)}</span></div>`;
+    }).join("");
+    const axis = `<div class="c-row c-axis"><span></span><span class="c-track">${ticks.map((t) => `<em style="left:${pct(t)}%">${Number(t).toFixed(tickDec)}</em>`).join("")}</span><span></span></div>`;
+    const leyenda = g.leyenda ? `<span class="chart__legend"><i class="c-key c-key--a"></i>${esc(g.leyenda[0])}<i class="c-key"></i>${esc(g.leyenda[1])}</span>` : "";
+    const orig = fig ? `<button type="button" class="fig-link fig-btn" data-fig="${esc(fig)}" data-cap="${esc(pie || "")}">${UI.figuraOriginal}</button>` : "";
+    return `
+      <figure class="chart">
+        <figcaption class="chart__title"><span>${esc(g.titulo)}</span>${leyenda}</figcaption>
+        <div class="chart__rows">${rows}${axis}</div>
+        ${g.nota || orig ? `<p class="chart__note">${g.nota ? `<span>${esc(g.nota)}</span>` : ""}${orig}</p>` : ""}
+      </figure>`;
+  }
+
   function proyectos() {
     return S.proyectos.map((p) => {
       const code = hasUser ? `${github}/${S.repo}/tree/main/proyectos/${p.carpeta}` : "";
@@ -182,10 +238,8 @@
         <article class="project reveal">
           <div class="project__meta">${esc(p.anio)} · ${esc(p.contexto)} · ${esc(p.equipo)}</div>
           <div class="project__head"><h3 class="project__title">${esc(p.titulo)}</h3><div class="project__links">${links}</div></div>
-          <div class="project__body${fig ? " has-fig" : ""}">
-            <p class="project__text">${esc(p.resumen)}</p>
-            ${fig ? `<figure class="project__fig"><button type="button" class="fig-btn" data-fig="${esc(fig)}" data-cap="${esc(p.pie || "")}" aria-label="${UI.verFigura}"><img src="${esc(fig)}" alt="${esc(p.pie || "")}" loading="lazy"></button>${p.pie ? `<figcaption>${esc(p.pie)}</figcaption>` : ""}</figure>` : ""}
-          </div>
+          <p class="project__text">${esc(p.resumen)}</p>
+          ${p.grafico ? grafico(p.grafico, fig, p.pie) : ""}
           <div class="metrics">${p.metricas.map(([v, l]) => `<div class="metric"><strong>${esc(v)}</strong><span>${esc(l)}</span></div>`).join("")}</div>
           <div class="stack">${p.stack.map((t) => `<span>${esc(t)}</span>`).join("")}</div>
         </article>`;

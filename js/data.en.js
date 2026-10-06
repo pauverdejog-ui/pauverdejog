@@ -40,6 +40,11 @@ window.SITE_EN = {
         ["+6.9", "AUC points over the MLP"],
         ["+42 %", "maximum statistical significance"]
       ],
+      grafico: {
+        titulo: "Test AUC-ROC (higher is better)",
+        filas: [{ e: "MLP" }, { e: "XGBoost · published reference" }, { e: "GNN · EdgeConv" }],
+        nota: "XGBoost reference at the same sample size (1 M events)."
+      },
       pie: "Test ROC curves: the GNN (orange) outperforms the MLP (blue) across the whole range. Figure labels in Catalan, from the report."
     },
     {
@@ -56,6 +61,11 @@ window.SITE_EN = {
         ["10", "variables after Markov blanket selection"]
       ],
       figura: "figura_en.png",
+      grafico: {
+        titulo: "Cross-validated Brier score (lower is better)",
+        filas: [{ e: "Naive Bayes · all variables" }, { e: "Naive Bayes · Markov blanket" }, { e: "ANB · all variables" }, { e: "ANB · Markov blanket" }],
+        nota: "The only model significantly better than all others (p < 0.001, Holm-corrected)."
+      },
       pie: "Win probability estimated by the final model in four game situations."
     },
     {
@@ -70,6 +80,11 @@ window.SITE_EN = {
         ["+4.5", "points over the mean individual network"],
         ["+3.1", "points with augmentation and mixup"]
       ],
+      grafico: {
+        titulo: "Test accuracy: mean network → ensemble of 3", leyenda: ["single network", "ensemble"],
+        filas: [{ e: "No normalisation" }, { e: "BatchNorm" }, { e: "GroupNorm" }, { e: "LayerNorm" }],
+        nota: "The unnormalised ensemble gains most because its networks make more diverse errors."
+      },
       pie: "Input image and activation maps of the first convolutional layer."
     },
     {
@@ -85,6 +100,11 @@ window.SITE_EN = {
         ["98.7 %", "test accuracy"],
         ["7,015", "Kepler signals classified"]
       ],
+      grafico: {
+        titulo: "Test AUC-ROC (higher is better)",
+        filas: [{ e: "k-NN · k = 7" }, { e: "SVM · RBF kernel" }, { e: "Random Forest" }],
+        nota: "Accuracy differences are not significant (paired tests, p > 0.05); Random Forest is chosen for interpretability."
+      },
       pie: "Random Forest feature importance: the false-positive flags and the planetary radius dominate. Labels in Catalan, from the report."
     },
     {
@@ -100,6 +120,11 @@ window.SITE_EN = {
         ["0.73", "conditional R² of the mixed model"],
         ["0.71", "intraclass correlation between dogs"]
       ],
+      grafico: {
+        titulo: "Variance in intensity explained (R²)",
+        filas: [{ e: "Fixed effects only · marginal R²" }, { e: "With a random effect per dog · conditional R²" }],
+        nota: "AIC: 977.7 with simple regression versus 888.2 with the mixed model."
+      },
       pie: "Intensity per dog and side over time: the variability between dogs justifies the mixed model. Labels in Catalan, from the report."
     }
   ],

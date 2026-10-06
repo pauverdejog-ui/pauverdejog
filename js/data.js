@@ -124,6 +124,15 @@ window.SITE = {
         ["+42 %", "de significancia estadística máxima"]
       ],
       stack: ["Python", "PyTorch", "PyTorch Geometric", "scikit-learn", "Matplotlib"],
+      grafico: {
+        tipo: "puntos", titulo: "AUC-ROC en test (más es mejor)", dominio: [0.76, 0.9], decimales: 3,
+        filas: [
+          { e: "MLP", v: 0.788 },
+          { e: "XGBoost · referencia publicada", v: 0.830, ref: true },
+          { e: "GNN · EdgeConv", v: 0.857, top: true }
+        ],
+        nota: "Referencia de XGBoost con el mismo tamaño de muestra (1 M de eventos)."
+      },
       figura: "figura.png",
       pie: "Curvas ROC en test: la GNN (naranja) supera al MLP (azul) en todo el rango.",
       carpeta: "higgs-gnn", informe: "informe.pdf"
@@ -144,6 +153,16 @@ window.SITE = {
         ["10", "variables tras la selección por Markov blanket"]
       ],
       stack: ["R", "bnlearn", "gRain", "ggplot2", "pROC"],
+      grafico: {
+        tipo: "puntos", titulo: "Brier score en validación cruzada (menos es mejor)", dominio: [0.18, 0.23], decimales: 3,
+        filas: [
+          { e: "Naive Bayes · todas las variables", v: 0.2251 },
+          { e: "Naive Bayes · Markov blanket", v: 0.2028 },
+          { e: "ANB · todas las variables", v: 0.1985 },
+          { e: "ANB · Markov blanket", v: 0.1886, top: true }
+        ],
+        nota: "Único modelo significativamente mejor que todos los demás (p < 0.001 con corrección de Holm)."
+      },
       figura: "figura.png",
       pie: "Probabilidad de victoria que estima el modelo final en cuatro situaciones de partida.",
       carpeta: "lol-bayesian-network", informe: "informe.pdf"
@@ -163,6 +182,17 @@ window.SITE = {
         ["+3.1", "puntos con augmentation y mixup"]
       ],
       stack: ["Python", "PyTorch", "torchvision"],
+      grafico: {
+        tipo: "pesas", titulo: "Precisión en test: media de las redes → ensemble de 3", dominio: [79, 86], decimales: 1, unidad: " %",
+        leyenda: ["red individual", "ensemble"],
+        filas: [
+          { e: "Sin normalización", a: 80.42, b: 84.87, top: true },
+          { e: "BatchNorm", a: 81.38, b: 84.53 },
+          { e: "GroupNorm", a: 80.94, b: 84.56 },
+          { e: "LayerNorm", a: 80.49, b: 84.06 }
+        ],
+        nota: "El ensemble sin normalización gana más porque sus redes cometen errores más distintos."
+      },
       figura: "figura.jpg",
       pie: "Imagen de entrada y mapas de activación de la primera capa convolucional.",
       carpeta: "cnn-image-classification", informe: "report.pdf"
@@ -183,6 +213,15 @@ window.SITE = {
         ["7.015", "señales de Kepler clasificadas"]
       ],
       stack: ["Python", "scikit-learn", "pandas", "SciPy", "Seaborn"],
+      grafico: {
+        tipo: "puntos", titulo: "AUC-ROC en test (más es mejor)", dominio: [0.99, 1], decimales: 3,
+        filas: [
+          { e: "k-NN · k = 7", v: 0.9943 },
+          { e: "SVM · kernel RBF", v: 0.9971 },
+          { e: "Random Forest", v: 0.9987, top: true }
+        ],
+        nota: "Las diferencias de precisión no son significativas (tests pareados, p > 0.05); se elige Random Forest por interpretabilidad."
+      },
       figura: "figura.png",
       pie: "Importancia de variables del Random Forest: dominan los indicadores de falso positivo y el radio planetario.",
       carpeta: "kepler-exoplanet-classification", informe: "informe.pdf"
@@ -203,6 +242,14 @@ window.SITE = {
         ["0.71", "correlación intraclase entre perros"]
       ],
       stack: ["R", "lme4", "nlme", "MuMIn", "ggplot2"],
+      grafico: {
+        tipo: "barras", titulo: "Variabilidad de la intensidad explicada (R²)", dominio: [0, 1], decimales: 2,
+        filas: [
+          { e: "Solo efectos fijos · R² marginal", v: 0.0802 },
+          { e: "Con efecto aleatorio por perro · R² condicional", v: 0.7337, top: true }
+        ],
+        nota: "AIC: 977.7 con regresión simple frente a 888.2 con el modelo mixto."
+      },
       figura: "figura.jpg",
       pie: "Intensidad por perro y costado a lo largo del tiempo: la variabilidad entre perros justifica el modelo mixto.",
       carpeta: "pixel-mixed-models", informe: "informe.pdf"
