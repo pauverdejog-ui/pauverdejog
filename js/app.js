@@ -1,15 +1,61 @@
-/* Genera la página a partir de window.SITE (js/data.js). No hace falta editarlo. */
+/* Genera la página a partir de window.SITE (js/data.js) y window.SITE_EN (js/data.en.js).
+   No hace falta editarlo. */
 (function () {
   "use strict";
 
-  const S = window.SITE;
+  /* ---------- Idioma ---------- */
+  const qs = new URLSearchParams(location.search).get("lang");
+  let saved = null;
+  try { saved = localStorage.getItem("lang"); } catch (e) { /* sin almacenamiento */ }
+  const LANG = qs === "en" || qs === "es" ? qs
+    : saved === "en" || saved === "es" ? saved
+    : /^(es|ca|gl|eu)/i.test(navigator.language || "") ? "es" : "en";
+  document.documentElement.lang = LANG;
+
+  // Mezcla los textos en inglés sobre los datos base (las listas se combinan por posición)
+  const merge = (base, over) => {
+    if (Array.isArray(base) && Array.isArray(over)) return base.map((b, i) => (i < over.length ? merge(b, over[i]) : b));
+    if (base && over && typeof base === "object" && typeof over === "object" && !Array.isArray(over)) {
+      const out = { ...base };
+      Object.keys(over).forEach((k) => { out[k] = k in base ? merge(base[k], over[k]) : over[k]; });
+      return out;
+    }
+    return over === undefined ? base : over;
+  };
+  const S = LANG === "en" && window.SITE_EN ? merge(window.SITE, window.SITE_EN) : window.SITE;
+
+  const UI = {
+    es: {
+      nav: ["Formación", "Experiencia", "Proyectos", "Conocimientos", "Contacto"], fotos: "Fotografía", volver: "Volver al CV",
+      formacion: "Formación", experiencia: "Experiencia", proyectos: "Proyectos", proyectosNota: "Código e informe de cada uno en GitHub.",
+      conocimientos: "Conocimientos", conocimientosNota: "Haz clic en un área para ver el detalle.", contacto: "Contacto",
+      codigo: "Código", informe: "Informe", cvEs: "CV en PDF ↓", cvEn: "CV in English ↓",
+      habilidades: "Habilidades técnicas", idiomas: "Idiomas", nivel: ["", "Básico", "Elemental", "Intermedio", "Avanzado", "Experto"],
+      nivelDe: (n) => `Nivel ${n} de 5`, verFigura: "Ampliar figura",
+      fotosSub: "Algunas fotos que he hecho.", fotosVacio: "Galería en preparación.",
+      demos: { lorenz: "Atractor de Lorenz · arrastra para girarlo", knn: "Clasificador k-NN · clic: punto azul, clic derecho: violeta",
+               orbitas: "Gravedad · arrastra para lanzar un planeta", borrar: "Borrar" }
+    },
+    en: {
+      nav: ["Education", "Experience", "Projects", "Knowledge", "Contact"], fotos: "Photography", volver: "Back to CV",
+      formacion: "Education", experiencia: "Experience", proyectos: "Projects", proyectosNota: "Code and report for each one on GitHub.",
+      conocimientos: "Knowledge", conocimientosNota: "Click an area to see the details.", contacto: "Contact",
+      codigo: "Code", informe: "Report", cvEs: "CV in Spanish ↓", cvEn: "CV in English ↓",
+      habilidades: "Technical skills", idiomas: "Languages", nivel: ["", "Basic", "Elementary", "Intermediate", "Advanced", "Expert"],
+      nivelDe: (n) => `Level ${n} of 5`, verFigura: "Enlarge figure",
+      fotosSub: "Some photos I have taken.", fotosVacio: "Gallery coming soon.",
+      demos: { lorenz: "Lorenz attractor · drag to rotate", knn: "k-NN classifier · click: blue point, right-click: purple",
+               orbitas: "Gravity · drag to launch a planet", borrar: "Clear" }
+    }
+  }[LANG];
+
   const page = document.body.dataset.page;
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
   const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const hasUser = S.githubUser && !/TU-USUARIO/i.test(S.githubUser);
   const github = hasUser ? `https://github.com/${S.githubUser}` : "";
-  const NIVEL = ["", "Básico", "Elemental", "Intermedio", "Avanzado", "Experto"];
+  const NIVEL = UI.nivel;
   const ext = (url) => (url ? `href="${esc(url)}" target="_blank" rel="noopener"` : "");
   const arrow = '<span class="arrow" aria-hidden="true">↗</span>';
   const plus = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
@@ -21,16 +67,23 @@
         : `<span>${esc(ini)}</span>`;
 
   const meter = (n) =>
-    `<div class="meter" role="img" aria-label="Nivel ${n} de 5">${[1, 2, 3, 4, 5].map((i) => `<i class="${i <= n ? "on" : ""}" style="--i:${i}"></i>`).join("")}</div>`;
+    `<div class="meter" role="img" aria-label="${UI.nivelDe(n)}">${[1, 2, 3, 4, 5].map((i) => `<i class="${i <= n ? "on" : ""}" style="--i:${i}"></i>`).join("")}</div>`;
 
   /* ---------- Cabecera ---------- */
   function topbar() {
+    const ids = ["formacion", "experiencia", "proyectos", "habilidades", "contacto"];
+    const other = LANG === "es" ? "en" : "es";
+    const sw = `<button class="lang" type="button" data-lang="${other}" aria-label="${other === "en" ? "English" : "Español"}"><b>${LANG.toUpperCase()}</b><span>${other.toUpperCase()}</span></button>`;
     const links = page === "inicio"
-      ? `<a href="#formacion">Formación</a><a href="#experiencia">Experiencia</a><a href="#proyectos">Proyectos</a>
-         <a href="#habilidades">Habilidades</a><a href="#contacto">Contacto</a>
-         <a class="pill" href="fotos.html">Fotografía <span class="arrow">→</span></a>`
-      : `<a class="pill" href="index.html"><span>←</span> Volver al CV</a>`;
+      ? `${ids.map((id, i) => `<a href="#${id}">${UI.nav[i]}</a>`).join("")}
+         ${sw}<a class="pill" href="fotos.html">${UI.fotos} <span class="arrow">→</span></a>`
+      : `${sw}<a class="pill" href="index.html"><span>←</span> ${UI.volver}</a>`;
     $("#topbar").innerHTML = `<div class="wrap"><a class="brand" href="index.html">${esc(S.perfil.nombre)}</a><nav class="nav">${links}</nav></div>`;
+    $("#topbar .lang").addEventListener("click", (e) => {
+      const l = e.currentTarget.dataset.lang;
+      try { localStorage.setItem("lang", l); } catch (err) { /* sin almacenamiento */ }
+      const u = new URL(location.href); u.searchParams.set("lang", l); location.href = u.toString();
+    });
     const bar = $("#topbar");
     const onScroll = () => {
       bar.classList.toggle("is-scrolled", window.scrollY > 8);
@@ -60,7 +113,7 @@
               <a href="mailto:${esc(p.email)}">${esc(p.email)}</a>
               <a ${ext(p.linkedin)}>LinkedIn ${arrow}</a>
               ${github ? `<a ${ext(github)}>GitHub ${arrow}</a>` : ""}
-              <a href="${esc(p.cvPdf)}" target="_blank" rel="noopener" class="cv-link" data-src="${esc(p.cvPdf)}" hidden>CV en PDF ↓</a>${p.cvPdfEn ? `<a href="${esc(p.cvPdfEn)}" target="_blank" rel="noopener" class="cv-link" data-src="${esc(p.cvPdfEn)}" hidden>CV in English ↓</a>` : ""}
+              <a href="${esc(p.cvPdf)}" target="_blank" rel="noopener" class="cv-link" data-src="${esc(p.cvPdf)}" hidden>${UI.cvEs}</a>${p.cvPdfEn ? `<a href="${esc(p.cvPdfEn)}" target="_blank" rel="noopener" class="cv-link" data-src="${esc(p.cvPdfEn)}" hidden>${UI.cvEn}</a>` : ""}
             </div>
           </div>
         </div>
@@ -123,12 +176,16 @@
     return S.proyectos.map((p) => {
       const code = hasUser ? `${github}/${S.repo}/tree/main/proyectos/${p.carpeta}` : "";
       const report = `proyectos/${p.carpeta}/${p.informe}`;
-      const links = `${code ? `<a ${ext(code)}>Código ${arrow}</a>` : ""}<a ${ext(report)}>Informe ${arrow}</a>`;
+      const fig = p.figura ? `proyectos/${p.carpeta}/${p.figura}` : "";
+      const links = `${code ? `<a ${ext(code)}>${UI.codigo} ${arrow}</a>` : ""}<a ${ext(report)}>${UI.informe} ${arrow}</a>`;
       return `
         <article class="project reveal">
           <div class="project__meta">${esc(p.anio)} · ${esc(p.contexto)} · ${esc(p.equipo)}</div>
           <div class="project__head"><h3 class="project__title">${esc(p.titulo)}</h3><div class="project__links">${links}</div></div>
-          <p class="project__text">${esc(p.resumen)}</p>
+          <div class="project__body${fig ? " has-fig" : ""}">
+            <p class="project__text">${esc(p.resumen)}</p>
+            ${fig ? `<figure class="project__fig"><button type="button" class="fig-btn" data-fig="${esc(fig)}" data-cap="${esc(p.pie || "")}" aria-label="${UI.verFigura}"><img src="${esc(fig)}" alt="${esc(p.pie || "")}" loading="lazy"></button>${p.pie ? `<figcaption>${esc(p.pie)}</figcaption>` : ""}</figure>` : ""}
+          </div>
           <div class="metrics">${p.metricas.map(([v, l]) => `<div class="metric"><strong>${esc(v)}</strong><span>${esc(l)}</span></div>`).join("")}</div>
           <div class="stack">${p.stack.map((t) => `<span>${esc(t)}</span>`).join("")}</div>
         </article>`;
@@ -156,12 +213,12 @@
       </div>`).join("");
     const idiomas = `
       <div class="side__group">
-        <h3>Idiomas</h3>
+        <h3>${UI.idiomas}</h3>
         <ul>${S.idiomas.map((l) => row(`<img src="assets/flags/${esc(l.bandera)}.svg" alt="">`, l.nombre, l.etiqueta, l.nivel, "", true)).join("")}</ul>
       </div>`;
     return `
-      <aside class="side reveal" aria-label="Habilidades técnicas e idiomas">
-        <h2 class="side__title">Habilidades técnicas</h2>
+      <aside class="side reveal" aria-label="${UI.habilidades}">
+        <h2 class="side__title">${UI.habilidades}</h2>
         ${groups}
         ${idiomas}
         <p class="side__legend">${NIVEL.slice(1).map((n, i) => `${i + 1} ${n}`).join(" · ")}</p>
@@ -189,27 +246,32 @@
       <div class="contact__links">
         <a ${ext(p.linkedin)}>LinkedIn ${arrow}</a>
         ${github ? `<a ${ext(github)}>GitHub ${arrow}</a>` : ""}
-        <a href="${esc(p.cvPdf)}" target="_blank" rel="noopener" class="cv-link" data-src="${esc(p.cvPdf)}" hidden>CV en PDF ↓</a>${p.cvPdfEn ? `<a href="${esc(p.cvPdfEn)}" target="_blank" rel="noopener" class="cv-link" data-src="${esc(p.cvPdfEn)}" hidden>CV in English ↓</a>` : ""}
+        <a href="${esc(p.cvPdf)}" target="_blank" rel="noopener" class="cv-link" data-src="${esc(p.cvPdf)}" hidden>${UI.cvEs}</a>${p.cvPdfEn ? `<a href="${esc(p.cvPdfEn)}" target="_blank" rel="noopener" class="cv-link" data-src="${esc(p.cvPdfEn)}" hidden>${UI.cvEn}</a>` : ""}
       </div>`;
   }
 
   const footer = () => `
     <footer class="footer">
       <span>© ${new Date().getFullYear()} ${esc(S.perfil.nombre)}</span>
-      <a href="${page === "inicio" ? "fotos.html" : "index.html"}">${page === "inicio" ? "Fotografía →" : "← Volver al CV"}</a>
+      <a href="${page === "inicio" ? "fotos.html" : "index.html"}">${page === "inicio" ? `${UI.fotos} →` : `← ${UI.volver}`}</a>
     </footer>`;
 
-  /* Piezas de arte generativo en los márgenes (solo pantallas anchas) */
+  /* Arte generativo y demos interactivas en los márgenes (solo pantallas anchas) */
   const ARTE = [
-    ["lorenz", "left", 3, 300, 329],
-    ["red-neuronal", "right", 16, 300, 620],
-    ["clusters", "left", 36, 300, 560],
-    ["ridgeline", "right", 55, 300, 600],
-    ["orbitas", "left", 72, 300, 560]
+    { demo: "lorenz", lado: "left", top: 2, h: 300 },
+    { svg: "red-neuronal", lado: "right", top: 14, w: 300, h: 620 },
+    { svg: "clusters", lado: "left", top: 33, w: 300, h: 560 },
+    { demo: "knn", lado: "right", top: 43, h: 270 },
+    { demo: "orbitas", lado: "left", top: 63, h: 300 },
+    { svg: "ridgeline", lado: "right", top: 72, w: 300, h: 600 }
   ];
   const arte = () => `
-    <div class="art" aria-hidden="true">${ARTE.map(([n, lado, top, w, h], i) =>
-      `<span class="art__piece art__piece--${lado}" style="top:${top}%;aspect-ratio:${w}/${h};-webkit-mask-image:url('assets/art/${n}.svg');mask-image:url('assets/art/${n}.svg');--d:${i}"></span>`).join("")}
+    <div class="art" aria-hidden="true">${ARTE.map((a, i) => a.svg
+      ? `<span class="art__piece art__piece--${a.lado}" style="top:${a.top}%;aspect-ratio:${a.w}/${a.h};-webkit-mask-image:url('assets/art/${a.svg}.svg');mask-image:url('assets/art/${a.svg}.svg');--d:${i}"></span>`
+      : `<div class="demo art__piece--${a.lado}" data-demo="${a.demo}" style="top:${a.top}%;--d:${i}">
+           <canvas style="height:${a.h}px"></canvas>
+           <div class="demo__cap"><span>${UI.demos[a.demo]}</span>${a.demo === "knn" ? `<span class="demo__btns"><button type="button" data-k>k = 5</button><button type="button" data-reset>${UI.demos.borrar}</button></span>` : ""}</div>
+         </div>`).join("")}
     </div>`;
 
   function renderInicio() {
@@ -220,19 +282,21 @@
       <div class="wrap">
         <div class="layout">
           <div class="main">
-            ${section("formacion", "Formación", "", formacion())}
-            ${section("experiencia", "Experiencia", "", experiencia())}
-            ${section("proyectos", "Proyectos", "Código e informe de cada uno en GitHub.", proyectos())}
-            ${section("habilidades", "Conocimientos", "Haz clic en un área para ver el detalle.", habilidades())}
+            ${section("formacion", UI.formacion, "", formacion())}
+            ${section("experiencia", UI.experiencia, "", experiencia())}
+            ${section("proyectos", UI.proyectos, UI.proyectosNota, proyectos())}
+            ${section("habilidades", UI.conocimientos, UI.conocimientosNota, habilidades())}
           </div>
           ${lateral()}
         </div>
-        ${section("contacto", "Contacto", "", contacto())}
+        ${section("contacto", UI.contacto, "", contacto())}
         ${footer()}
       </div>
       </div>`;
 
     cargarFondo();
+    if (window.initDemos) window.initDemos();
+    figuras();
 
     $$(".area__head").forEach((b) => b.addEventListener("click", () => {
       const a = b.closest(".area");
@@ -259,19 +323,35 @@
     }
   }
 
+  /* Visor a pantalla completa para las figuras de los proyectos */
+  function figuras() {
+    const lb = document.createElement("div");
+    lb.className = "lightbox lightbox--fig"; lb.hidden = true;
+    document.body.appendChild(lb);
+    const hide = () => { lb.classList.remove("is-open"); setTimeout(() => (lb.hidden = true), 250); };
+    document.addEventListener("click", (e) => {
+      const b = e.target.closest(".fig-btn");
+      if (b) {
+        lb.innerHTML = `<figure style="margin:0"><img src="${esc(b.dataset.fig)}" alt="">${b.dataset.cap ? `<p>${esc(b.dataset.cap)}</p>` : ""}</figure>`;
+        lb.hidden = false; requestAnimationFrame(() => lb.classList.add("is-open"));
+      } else if (e.target.closest(".lightbox--fig")) hide();
+    });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !lb.hidden) hide(); });
+  }
+
   /* ---------- Página de fotografía ---------- */
   function renderFotos() {
     const f = S.fotos;
     $("#app").innerHTML = `
       <div class="wrap">
-        <div class="gallery-head"><h1>Fotografía</h1><p>Algunas fotos que he hecho.</p></div>
+        <div class="gallery-head"><h1>${UI.fotos}</h1><p>${UI.fotosSub}</p></div>
         ${f.length
           ? `<div class="gallery">${f.map((x, i) => `
               <figure class="shot" data-i="${i}">
                 <img src="${esc(x.src)}" alt="${esc(x.titulo || "")}" loading="lazy">
                 ${x.titulo || x.lugar ? `<figcaption>${esc(x.titulo)}${x.lugar ? ` · ${esc(x.lugar)}` : ""}</figcaption>` : ""}
               </figure>`).join("")}</div>`
-          : `<p class="empty">Galería en preparación.</p>`}
+          : `<p class="empty">${UI.fotosVacio}</p>`}
         ${footer()}
       </div>`;
 

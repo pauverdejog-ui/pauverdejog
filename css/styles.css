@@ -72,7 +72,7 @@ a:hover .arrow { transform: translate(2px, -2px); }
 }
 .topbar.is-scrolled { border-bottom-color: var(--line); }
 .topbar .wrap { height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
-.brand { font-weight: 600; font-size: 15px; letter-spacing: -.01em; }
+.brand { font-weight: 600; font-size: 15px; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .nav { display: flex; align-items: center; gap: 28px; font-size: 14px; color: var(--text-2); }
 .nav a { transition: color .2s; }
 .nav a:hover, .nav a.is-active { color: var(--text); }
@@ -270,6 +270,41 @@ a:hover .arrow { transform: translate(2px, -2px); }
 .lightbox img { max-width: 100%; max-height: 86vh; border-radius: 6px; }
 .lightbox p { margin: 14px 0 0; text-align: center; color: rgba(255, 255, 255, .75); font-size: 14px; }
 
+
+/* ---------- Selector de idioma ---------- */
+.lang { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; font-size: 12px; letter-spacing: .02em; cursor: pointer; }
+.lang b, .lang span { padding: 3px 8px; border-radius: 999px; }
+.lang b { background: var(--text); color: var(--bg); font-weight: 600; }
+.lang span { color: var(--text-2); }
+.lang:hover span { color: var(--text); }
+.topbar.on-hero .lang { border-color: rgba(255, 255, 255, .4); }
+.topbar.on-hero .lang b { background: #fff; color: #000; }
+.topbar.on-hero .lang span { color: rgba(255, 255, 255, .85); }
+
+/* ---------- Figura de cada proyecto ---------- */
+.project__fig { margin: 24px 0 0; max-width: 460px; }
+.fig-btn { display: block; width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 14px; background: #fff; cursor: zoom-in; transition: border-color .2s, transform .3s var(--ease); }
+.fig-btn:hover { border-color: color-mix(in srgb, var(--text) 30%, transparent); transform: translateY(-2px); }
+.fig-btn img { width: 100%; height: auto; border-radius: 6px; }
+.project__fig figcaption { margin-top: 8px; font-size: 12.5px; line-height: 1.4; color: var(--text-3); }
+.lightbox--fig .lightbox img, .lightbox--fig img { background: #fff; padding: 16px; border-radius: 12px; max-height: 82vh; }
+
+/* ---------- Demos interactivas ---------- */
+.demo {
+  --w: 270px;
+  position: absolute; width: var(--w);
+  pointer-events: auto;
+  opacity: 0; animation: art-in 1.6s var(--ease) forwards; animation-delay: calc(var(--d) * 180ms + 300ms);
+}
+.demo canvas { display: block; width: 100%; cursor: crosshair; touch-action: none; border-radius: 14px; }
+.demo[data-demo="lorenz"] canvas { cursor: grab; }
+.demo__cap { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px; margin-top: 6px; font-size: 11.5px; line-height: 1.35; color: var(--text-3); }
+.demo__btns { display: inline-flex; gap: 4px; }
+.demo__btns button { padding: 2px 8px; border: 1px solid var(--line); border-radius: 999px; font-size: 11px; color: var(--text-2); }
+.demo__btns button:hover { color: var(--text); border-color: color-mix(in srgb, var(--text) 30%, transparent); }
+.art .demo.art__piece--left { left: calc(50% - (var(--wrap) / 2) - var(--w) + 30px); }
+.art .demo.art__piece--right { right: calc(50% - (var(--wrap) / 2) - var(--w) + 30px); }
+
 /* ---------- Entrada suave ---------- */
 .reveal { opacity: 0; transform: translateY(10px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
 .reveal.is-in { opacity: 1; transform: none; }
@@ -289,6 +324,7 @@ a:hover .arrow { transform: translate(2px, -2px); }
   :root { --pad: 20px; }
   body { font-size: 16px; }
   .nav a:not(.pill) { display: none; }
+  .nav { gap: 10px; }
   .hero { padding: 140px 0 64px; min-height: 64vh; }
   .hero__loc { font-size: 18px; }
   .section { padding: 48px 0; }

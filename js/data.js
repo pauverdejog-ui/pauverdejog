@@ -105,7 +105,7 @@ window.SITE = {
 
   /* ------------------------------------------------------------------
      PROYECTOS · cada uno está en proyectos/<carpeta>/ dentro del repositorio,
-     con su código y su informe.
+     con su código, su informe y una figura (figura = archivo dentro de la carpeta).
      ------------------------------------------------------------------ */
   proyectos: [
     {
@@ -124,6 +124,8 @@ window.SITE = {
         ["+42 %", "de significancia estadística máxima"]
       ],
       stack: ["Python", "PyTorch", "PyTorch Geometric", "scikit-learn", "Matplotlib"],
+      figura: "figura.png",
+      pie: "Curvas ROC en test: la GNN (naranja) supera al MLP (azul) en todo el rango.",
       carpeta: "higgs-gnn", informe: "informe.pdf"
     },
     {
@@ -142,6 +144,8 @@ window.SITE = {
         ["10", "variables tras la selección por Markov blanket"]
       ],
       stack: ["R", "bnlearn", "gRain", "ggplot2", "pROC"],
+      figura: "figura.png",
+      pie: "Probabilidad de victoria que estima el modelo final en cuatro situaciones de partida.",
       carpeta: "lol-bayesian-network", informe: "informe.pdf"
     },
     {
@@ -159,6 +163,8 @@ window.SITE = {
         ["+3.1", "puntos con augmentation y mixup"]
       ],
       stack: ["Python", "PyTorch", "torchvision"],
+      figura: "figura.jpg",
+      pie: "Imagen de entrada y mapas de activación de la primera capa convolucional.",
       carpeta: "cnn-image-classification", informe: "report.pdf"
     },
     {
@@ -177,6 +183,8 @@ window.SITE = {
         ["7.015", "señales de Kepler clasificadas"]
       ],
       stack: ["Python", "scikit-learn", "pandas", "SciPy", "Seaborn"],
+      figura: "figura.png",
+      pie: "Importancia de variables del Random Forest: dominan los indicadores de falso positivo y el radio planetario.",
       carpeta: "kepler-exoplanet-classification", informe: "informe.pdf"
     },
     {
@@ -195,6 +203,8 @@ window.SITE = {
         ["0.71", "correlación intraclase entre perros"]
       ],
       stack: ["R", "lme4", "nlme", "MuMIn", "ggplot2"],
+      figura: "figura.jpg",
+      pie: "Intensidad por perro y costado a lo largo del tiempo: la variabilidad entre perros justifica el modelo mixto.",
       carpeta: "pixel-mixed-models", informe: "informe.pdf"
     }
   ],
