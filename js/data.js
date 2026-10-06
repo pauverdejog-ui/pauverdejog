@@ -66,7 +66,7 @@ window.SITE = {
       titulo: "Bachillerato Internacional",
       centro: "Àgora Sant Cugat International School",
       periodo: "2020 – 2022",
-      logo: "",
+      logo: "https://www.micole.net/imagenes/colegio/logo/21834/agora-sant-cugat-international-school_128.png",
       iniciales: "IB",
       url: "https://sant-cugat.agorainternationalschool.es/"
     },
@@ -74,7 +74,7 @@ window.SITE = {
       titulo: "Cambridge C1 Advanced",
       centro: "Certificado oficial de inglés",
       periodo: "2026",
-      logo: "",
+      logo: "https://www.cambridgeenglish.org/Images/english-logo.svg",
       iniciales: "C1",
       url: "https://www.cambridgeenglish.org/exams-and-tests/qualifications/advanced/"
     }
