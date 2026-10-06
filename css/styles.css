@@ -129,6 +129,29 @@ a:hover .arrow { transform: translate(2px, -2px); }
 .topbar.on-hero .pill { color: #fff !important; border-color: rgba(255, 255, 255, .4); }
 .topbar.on-hero .pill:hover { background: rgba(255, 255, 255, .12); }
 
+/* ---------- Arte generativo en los márgenes ---------- */
+.page { position: relative; }
+.page > .wrap { position: relative; z-index: 1; }
+.art { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; display: none; }
+@media (min-width: 1320px) { .art { display: block; } }
+.art__piece {
+  --w: 270px;
+  position: absolute;
+  width: var(--w);
+  background: linear-gradient(170deg, var(--art-a), var(--art-b));
+  -webkit-mask-position: center; mask-position: center;
+  -webkit-mask-size: contain; mask-size: contain;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  opacity: 0;
+  animation: art-in 1.6s var(--ease) forwards;
+  animation-delay: calc(var(--d) * 180ms + 300ms);
+}
+.art__piece--left { left: calc(50% - (var(--wrap) / 2) - var(--w) + 30px); }
+.art__piece--right { right: calc(50% - (var(--wrap) / 2) - var(--w) + 30px); }
+@keyframes art-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+:root { --art-a: rgba(0, 113, 227, .42); --art-b: rgba(175, 82, 222, .34); }
+@media (prefers-color-scheme: dark) { :root { --art-a: rgba(41, 151, 255, .5); --art-b: rgba(191, 90, 242, .42); } }
+
 /* ---------- Disposición: contenido + columna lateral ---------- */
 .layout { display: grid; grid-template-columns: minmax(0, 1fr) 288px; gap: 80px; align-items: start; }
 

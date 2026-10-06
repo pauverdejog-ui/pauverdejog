@@ -137,7 +137,7 @@
 
   function sideLogo(t) {
     if (t.logo === "sql") return db;
-    if (t.logo) return logoImg(`assets/logos/${t.logo}.svg`, t.ini || t.nombre.slice(0, 2));
+    if (t.logo) return logoImg(`assets/logos/${t.logo.includes(".") ? t.logo : t.logo + ".svg"}`, t.ini || t.nombre.slice(0, 2));
     return `<span>${esc(t.ini || t.nombre.slice(0, 2))}</span>`;
   }
 
@@ -199,9 +199,24 @@
       <a href="${page === "inicio" ? "fotos.html" : "index.html"}">${page === "inicio" ? "Fotografía →" : "← Volver al CV"}</a>
     </footer>`;
 
+  /* Piezas de arte generativo en los márgenes (solo pantallas anchas) */
+  const ARTE = [
+    ["lorenz", "left", 3, 300, 329],
+    ["red-neuronal", "right", 16, 300, 620],
+    ["clusters", "left", 36, 300, 560],
+    ["ridgeline", "right", 55, 300, 600],
+    ["orbitas", "left", 72, 300, 560]
+  ];
+  const arte = () => `
+    <div class="art" aria-hidden="true">${ARTE.map(([n, lado, top, w, h], i) =>
+      `<span class="art__piece art__piece--${lado}" style="top:${top}%;aspect-ratio:${w}/${h};-webkit-mask-image:url('assets/art/${n}.svg');mask-image:url('assets/art/${n}.svg');--d:${i}"></span>`).join("")}
+    </div>`;
+
   function renderInicio() {
     $("#app").innerHTML = `
       ${hero()}
+      <div class="page">
+      ${arte()}
       <div class="wrap">
         <div class="layout">
           <div class="main">
@@ -214,6 +229,7 @@
         </div>
         ${section("contacto", "Contacto", "", contacto())}
         ${footer()}
+      </div>
       </div>`;
 
     cargarFondo();

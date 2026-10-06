@@ -286,7 +286,7 @@ window.SITE = {
     }
   ],
 
-  /* logo: archivo de assets/logos (sin extensión) · "" muestra iniciales */
+  /* logo: archivo de assets/logos (sin extensión si es .svg) · "" muestra iniciales */
   tecnologias: [
     {
       grupo: "Lenguajes",
@@ -303,9 +303,9 @@ window.SITE = {
       grupo: "Ciencia de datos y machine learning",
       items: [
         { nombre: "PyTorch", logo: "pytorch", nivel: 4, uso: "MLP, CNN y GNN; bucles de entrenamiento propios." },
-        { nombre: "PyTorch Geometric", logo: "", ini: "PyG", nivel: 3, uso: "Redes de grafos: EdgeConv y pooling global." },
+        { nombre: "PyTorch Geometric", logo: "pyg", ini: "PyG", nivel: 3, uso: "Redes de grafos: EdgeConv y pooling global." },
         { nombre: "scikit-learn", logo: "scikitlearn", nivel: 4, uso: "Preprocesado, modelos clásicos y métricas." },
-        { nombre: "XGBoost", logo: "", ini: "XG", nivel: 3, uso: "Gradient boosting para datos tabulares." },
+        { nombre: "XGBoost", logo: "xgboost.png", ini: "XG", nivel: 3, uso: "Gradient boosting para datos tabulares." },
         { nombre: "pandas", logo: "pandas", nivel: 4, uso: "Limpieza y transformación de datos." },
         { nombre: "NumPy", logo: "numpy", nivel: 4, uso: "Cálculo vectorizado y álgebra lineal." }
       ]
@@ -314,10 +314,10 @@ window.SITE = {
       grupo: "Visualización de datos",
       items: [
         { nombre: "Matplotlib", logo: "matplotlib", nivel: 4, uso: "Figuras para informes científicos." },
-        { nombre: "Seaborn", logo: "", ini: "Sb", nivel: 4, uso: "Visualización estadística exploratoria." },
-        { nombre: "ggplot2", logo: "", ini: "gg", nivel: 4, uso: "Gráficos estadísticos en R." },
-        { nombre: "Tableau", logo: "", ini: "Tb", nivel: 3, uso: "Dashboards interactivos." },
-        { nombre: "Power BI", logo: "", ini: "BI", nivel: 3, uso: "Informes y cuadros de mando." }
+        { nombre: "Seaborn", logo: "seaborn.png", ini: "Sb", nivel: 4, uso: "Visualización estadística exploratoria." },
+        { nombre: "ggplot2", logo: "ggplot2.png", ini: "gg", nivel: 4, uso: "Gráficos estadísticos en R." },
+        { nombre: "Tableau", logo: "tableau", ini: "Tb", nivel: 3, uso: "Dashboards interactivos." },
+        { nombre: "Power BI", logo: "powerbi", ini: "BI", nivel: 3, uso: "Informes y cuadros de mando." }
       ]
     },
     {
