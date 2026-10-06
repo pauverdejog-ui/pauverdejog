@@ -7,7 +7,7 @@ window.SITE = {
 
   githubUser: "pauverdejog-ui",
   /* Repositorio donde están la web y la carpeta proyectos/ */
-  repo: "pauverdejog",
+  repo: "pauverdejog-ui.github.io",
 
   perfil: {
     nombre: "Pau Verdejo Gallardo",
