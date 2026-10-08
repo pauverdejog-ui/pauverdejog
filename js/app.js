@@ -312,18 +312,18 @@
 
   /* Arte generativo y demos interactivas en los márgenes (solo pantallas anchas) */
   const ARTE = [
-    { demo: "lorenz", lado: "left", top: 2, h: 300 },
+    { demo: "lorenz", lado: "left", top: 2, ar: "9 / 10" },
     { svg: "red-neuronal", lado: "right", top: 14, w: 300, h: 620 },
     { svg: "clusters", lado: "left", top: 33, w: 300, h: 560 },
-    { demo: "knn", lado: "right", top: 43, h: 270 },
-    { demo: "orbitas", lado: "left", top: 63, h: 300 },
+    { demo: "knn", lado: "right", top: 43, ar: "1 / 1" },
+    { demo: "orbitas", lado: "left", top: 63, ar: "9 / 10" },
     { svg: "ridgeline", lado: "right", top: 72, w: 300, h: 600 }
   ];
   const arte = () => `
     <div class="art" aria-hidden="true">${ARTE.map((a, i) => a.svg
       ? `<span class="art__piece art__piece--${a.lado}" style="top:${a.top}%;aspect-ratio:${a.w}/${a.h};-webkit-mask-image:url('assets/art/${a.svg}.svg');mask-image:url('assets/art/${a.svg}.svg');--d:${i}"></span>`
       : `<div class="demo art__piece--${a.lado}" data-demo="${a.demo}" style="top:${a.top}%;--d:${i}">
-           <canvas style="height:${a.h}px"></canvas>
+           <canvas style="aspect-ratio:${a.ar}"></canvas>
            <div class="demo__cap"><span>${UI.demos[a.demo]}</span>${a.demo === "knn" ? `<span class="demo__btns"><button type="button" data-k>k = 5</button><button type="button" data-reset>${UI.demos.borrar}</button></span>` : ""}</div>
          </div>`).join("")}
     </div>`;

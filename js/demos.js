@@ -13,14 +13,26 @@
     bg: css("--bg") || "#fff"
   });
 
-  function setupCanvas(cv) {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const w = cv.clientWidth, h = cv.clientHeight;
-    cv.width = w * dpr; cv.height = h * dpr;
-    const ctx = cv.getContext("2d");
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    return { ctx, w, h };
+  /* Las demos trabajan en un sistema de coordenadas fijo de 270 px de ancho
+     y se escalan al ancho real del margen (más estrecho en portátiles). */
+  const BASE = 270;
+  function setupCanvas(cv, onResize) {
+    const st = { ctx: cv.getContext("2d"), w: BASE, h: BASE, s: 1 };
+    const fit = () => {
+      const cw = cv.clientWidth, ch = cv.clientHeight;
+      if (!cw || !ch) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
+      st.s = cw / BASE; st.h = ch / st.s;
+      st.ctx.setTransform(dpr * st.s, 0, 0, dpr * st.s, 0, 0);
+      if (onResize) onResize();
+    };
+    fit();
+    let t = 0;
+    window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(fit, 150); });
+    return st;
   }
+  const local = (cv, st, e) => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / st.s, (e.clientY - r.top) / st.s]; };
 
   /* Ejecuta el bucle solo mientras la demo es visible */
   function loop(el, step) {
@@ -37,7 +49,7 @@
   /* ---------- 1. Atractor de Lorenz ---------- */
   function lorenz(el) {
     const cv = el.querySelector("canvas");
-    let { ctx, w, h } = setupCanvas(cv);
+    const { ctx, w, h } = setupCanvas(cv);
     const s = 10, r = 28, b = 8 / 3, dt = 0.006;
     let p = [0.1, 0, 20];
     const trail = [];
@@ -78,7 +90,9 @@
   /* ---------- 2. Clasificador k-NN ---------- */
   function knn(el) {
     const cv = el.querySelector("canvas");
-    let { ctx, w, h } = setupCanvas(cv);
+    let draw = () => {};
+    const st = setupCanvas(cv, () => draw());
+    const { ctx, w, h } = st;
     const kBtn = el.querySelector("[data-k]");
     let k = 5;
     const pts = [];
@@ -89,7 +103,7 @@
     const off = document.createElement("canvas"); off.width = gw; off.height = gh;
     const octx = off.getContext("2d");
     const rgb = (s) => s.split(",").map(Number);
-    const draw = () => {
+    draw = () => {
       const c = pal(), A = rgb(c.a), B = rgb(c.b);
       const img = octx.createImageData(gw, gh);
       for (let gy = 0; gy < gh; gy++) for (let gx = 0; gx < gw; gx++) {
@@ -115,14 +129,14 @@
       });
     };
     cv.addEventListener("click", (e) => {
-      const r = cv.getBoundingClientRect();
-      pts.push({ x: e.clientX - r.left, y: e.clientY - r.top, c: e.shiftKey || e.altKey ? 1 : 0 });
+      const [x, y] = local(cv, st, e);
+      pts.push({ x, y, c: e.shiftKey || e.altKey ? 1 : 0 });
       draw();
     });
     cv.addEventListener("contextmenu", (e) => {
       e.preventDefault();
-      const r = cv.getBoundingClientRect();
-      pts.push({ x: e.clientX - r.left, y: e.clientY - r.top, c: 1 }); draw();
+      const [x, y] = local(cv, st, e);
+      pts.push({ x, y, c: 1 }); draw();
     });
     kBtn.addEventListener("click", () => { k = { 1: 3, 3: 5, 5: 9, 9: 1 }[k]; kBtn.textContent = `k = ${k}`; draw(); });
     el.querySelector("[data-reset]").addEventListener("click", () => { pts.length = 0; draw(); });
@@ -133,13 +147,14 @@
   /* ---------- 3. Gravedad (órbitas) ---------- */
   function orbitas(el) {
     const cv = el.querySelector("canvas");
-    let { ctx, w, h } = setupCanvas(cv);
+    const st = setupCanvas(cv);
+    const { ctx, w, h } = st;
     const GM = 2600, cx = w / 2, cy = h / 2;
     let bodies = [];
     const add = (x, y, vx, vy) => { bodies.push({ x, y, vx, vy, t: [] }); if (bodies.length > 6) bodies.shift(); };
     add(cx + 70, cy, 0, Math.sqrt(GM / 70)); add(cx - 105, cy, 0, -Math.sqrt(GM / 105) * 0.82);
     let drag = null;
-    const pos = (e) => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+    const pos = (e) => local(cv, st, e);
     cv.addEventListener("pointerdown", (e) => { drag = { s: pos(e), c: pos(e) }; cv.setPointerCapture(e.pointerId); });
     cv.addEventListener("pointermove", (e) => { if (drag) drag.c = pos(e); });
     cv.addEventListener("pointerup", () => {
@@ -178,12 +193,15 @@
     });
   }
 
+  // Mismo umbral que en el CSS (.art se muestra a partir de 1400 px)
+  const WIDE = window.matchMedia("(min-width: 1400px)");
   window.initDemos = function () {
-    if (!window.matchMedia("(min-width: 1320px)").matches) return;
+    if (!WIDE.matches) return;
     const map = { lorenz, knn, orbitas };
     document.querySelectorAll(".demo[data-demo]").forEach((el) => {
       const fn = map[el.dataset.demo];
-      if (fn && !el.dataset.ready) { el.dataset.ready = "1"; fn(el); }
+      if (fn && !el.dataset.ready && el.querySelector("canvas").clientWidth) { el.dataset.ready = "1"; fn(el); }
     });
   };
+  WIDE.addEventListener("change", () => window.initDemos());
 })();

@@ -132,10 +132,13 @@ a:hover .arrow { transform: translate(2px, -2px); }
 /* ---------- Arte generativo en los márgenes ---------- */
 .page { position: relative; }
 .page > .wrap { position: relative; z-index: 1; }
+/* Las piezas se adaptan al hueco real del margen: --m es el espacio libre a cada lado del
+   contenido; la pieza ocupa como máximo 270 px y se centra en ese hueco. Por debajo de
+   1400 px de ancho no caben bien y se ocultan. */
 .art { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; display: none; }
-@media (min-width: 1320px) { .art { display: block; } }
+@media (min-width: 1400px) { .art { display: block; } }
+.art > * { --m: calc((100% - var(--wrap)) / 2 + var(--pad)); --w: min(270px, calc(var(--m) - 56px)); }
 .art__piece {
-  --w: 270px;
   position: absolute;
   width: var(--w);
   background: linear-gradient(170deg, var(--art-a), var(--art-b));
@@ -146,8 +149,8 @@ a:hover .arrow { transform: translate(2px, -2px); }
   animation: art-in 1.6s var(--ease) forwards;
   animation-delay: calc(var(--d) * 180ms + 300ms);
 }
-.art__piece--left { left: calc(50% - (var(--wrap) / 2) - var(--w) + 30px); }
-.art__piece--right { right: calc(50% - (var(--wrap) / 2) - var(--w) + 30px); }
+.art__piece--left { left: calc((var(--m) - var(--w)) / 2); }
+.art__piece--right { right: calc((var(--m) - var(--w)) / 2); }
 @keyframes art-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 :root { --art-a: rgba(0, 113, 227, .42); --art-b: rgba(175, 82, 222, .34); }
 @media (prefers-color-scheme: dark) { :root { --art-a: rgba(41, 151, 255, .5); --art-b: rgba(191, 90, 242, .42); } }
@@ -318,7 +321,6 @@ a:hover .arrow { transform: translate(2px, -2px); }
 
 /* ---------- Demos interactivas ---------- */
 .demo {
-  --w: 270px;
   position: absolute; width: var(--w);
   pointer-events: auto;
   opacity: 0; animation: art-in 1.6s var(--ease) forwards; animation-delay: calc(var(--d) * 180ms + 300ms);
@@ -329,8 +331,8 @@ a:hover .arrow { transform: translate(2px, -2px); }
 .demo__btns { display: inline-flex; gap: 4px; }
 .demo__btns button { padding: 2px 8px; border: 1px solid var(--line); border-radius: 999px; font-size: 11px; color: var(--text-2); }
 .demo__btns button:hover { color: var(--text); border-color: color-mix(in srgb, var(--text) 30%, transparent); }
-.art .demo.art__piece--left { left: calc(50% - (var(--wrap) / 2) - var(--w) + 30px); }
-.art .demo.art__piece--right { right: calc(50% - (var(--wrap) / 2) - var(--w) + 30px); }
+.art .demo.art__piece--left { left: calc((var(--m) - var(--w)) / 2); }
+.art .demo.art__piece--right { right: calc((var(--m) - var(--w)) / 2); }
 
 /* ---------- Entrada suave ---------- */
 .reveal { opacity: 0; transform: translateY(10px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
